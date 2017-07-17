@@ -17,7 +17,7 @@ public class StreamImpl implements Stream{
 	public StreamImpl(String source){
 		
 		if(source == null){
-			throw new RuntimeException("Não é permitido valores nulos");
+			throw new RuntimeException("Não é permitido valor nulo");
 		}
 		
 		this.source = source.toCharArray();
