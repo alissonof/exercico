@@ -7,25 +7,29 @@ import stream.Stream;
 
 public class StreamImpl implements Stream{
 
+	
+	private static final char INDICA_FIM_ARQUIVO = '!';
 	private char[] source;
 	private int count;
 	private Set<Character> vowelList;
+	private char result;
 
 	public StreamImpl(String source){
 		this.source = source.toCharArray();
 		count = 0;
 		vowelList = new HashSet<Character>();
+		result = ' ';
 	}
 
 	@Override
 	public char getNext() {
 
-		char result = findNext();
-
-		// caso não encontre a sequencia vogal consoante vogal será gerado uma exceção
-		if(result == '!'){
-			count = source.length;
-			throw new RuntimeException("Não foi encontrado sequencia: vogal consoante vogal, onde a segunda vogal não tenha aparecido anteriormente");
+		// caso invoque o método getNext sem antes invocar o método hasNext
+		if(result == ' '){
+			throw new RuntimeException("Não pode invocar o método getNext sem antes chamar o método hasNext");
+		// caso tenha chegado no fim do arquivo será gerado erro
+		}else if(result == INDICA_FIM_ARQUIVO){
+			throw new RuntimeException("Já Chegou no fim do Stream");
 		}
 
 		return result;
@@ -33,7 +37,22 @@ public class StreamImpl implements Stream{
 
 	@Override
 	public boolean hasNext() {
-		return count != source.length;
+		
+		
+		if(count != source.length){
+			
+			result = findNext();
+
+			// caso não encontre a sequencia vogal consoante vogal, onde a segunda vogal não tenha aparecido anteriormente
+			if(result == INDICA_FIM_ARQUIVO){
+				count = source.length;
+			}else{
+				return true;
+			}
+			
+		}
+		
+		return false;
 	}
 
 	/**
@@ -42,7 +61,7 @@ public class StreamImpl implements Stream{
 	 */
 	private char findNext(){
 		// A exclamação indica fim do stream, caso retorne exclamação significa que o stream chegou ao fim
-		char result = '!';
+		char result = INDICA_FIM_ARQUIVO;
 		
 		for(int i = count; i < source.length; i++){
 			
