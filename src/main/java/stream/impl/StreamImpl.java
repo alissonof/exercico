@@ -15,6 +15,11 @@ public class StreamImpl implements Stream{
 	private char result;
 
 	public StreamImpl(String source){
+		
+		if(source == null){
+			throw new RuntimeException("Não é permitido valores nulos");
+		}
+		
 		this.source = source.toCharArray();
 		count = 0;
 		vowelList = new HashSet<Character>();
