@@ -21,39 +21,37 @@ public class TestStream {
 	
 	
 	@Test
-	public void testaSequenciaTerminaVogal(){
+	public void testaChamaGetNextSemChamarHasNext(){
 		Stream stream = new StreamImpl("aAbBABacafewA");
 
-		Assert.assertEquals(true, stream.hasNext());
-		Assert.assertEquals('e', stream.getNext());
-		
-		Assert.assertEquals(true, stream.hasNext());
-		
 		try{
 			stream.getNext();
 			Assert.assertTrue(false);
 		}catch(RuntimeException ex){
-			Assert.assertEquals("Não foi encontrado sequencia: vogal consoante vogal, onde a segunda vogal não tenha aparecido anteriormente", ex.getMessage());
+			Assert.assertEquals("Não pode invocar o método getNext sem antes chamar o método hasNext", ex.getMessage());
 		}
-		
-		Assert.assertEquals(false, stream.hasNext());
-		
+			
 	}
 
 	@Test
 	public void testaRetornaFalseHasNext(){
 		Stream stream = new StreamImpl("aAbBABacafewAqAq");
+		
+		int count = 0;
+		while(stream.hasNext()){
+			
+			// É esperado que entre somente uma vez
+			Assert.assertTrue(count < 1);
+			Assert.assertEquals('e', stream.getNext());
+			count++; 
+		}
+		
 
-		Assert.assertEquals(true, stream.hasNext());
-		Assert.assertEquals('e', stream.getNext());
-		
-		Assert.assertEquals(true, stream.hasNext());
-		
 		try{
 			stream.getNext();
 			Assert.assertTrue(false);
 		}catch(RuntimeException ex){
-			Assert.assertEquals("Não foi encontrado sequencia: vogal consoante vogal, onde a segunda vogal não tenha aparecido anteriormente", ex.getMessage());
+			Assert.assertEquals("Já Chegou no fim do Stream", ex.getMessage());
 		}
 		
 		Assert.assertEquals(false, stream.hasNext());
@@ -64,22 +62,23 @@ public class TestStream {
 	@Test
 	public void testa2SequenciaSeguidas(){
 		Stream stream = new StreamImpl("aAbBABacafewiq");
-
-		Assert.assertEquals(true, stream.hasNext());
-		Assert.assertEquals('e', stream.getNext());
 		
-		Assert.assertEquals(true, stream.hasNext());
-		Assert.assertEquals('i', stream.getNext());
-		
-		Assert.assertEquals(true, stream.hasNext());
-		try{
-			stream.getNext();
-			Assert.assertTrue(false);
-		}catch(RuntimeException ex){
-			Assert.assertEquals("Não foi encontrado sequencia: vogal consoante vogal, onde a segunda vogal não tenha aparecido anteriormente", ex.getMessage());
+		int count = 0;
+		while(stream.hasNext()){
+			
+			if(count == 0){
+				Assert.assertEquals('e', stream.getNext());
+			}else if(count == 1){
+				Assert.assertEquals('i', stream.getNext());
+			}else{
+				// não pode cair no else pois significa ele entrou mais de duas vezes dentro do while
+				// o que não é esperado
+				Assert.assertTrue(false);
+			}
+			
+			count++;
+			
 		}
-		
-		Assert.assertEquals(false, stream.hasNext());
 		
 	}
 }
